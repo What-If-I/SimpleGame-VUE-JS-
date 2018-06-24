@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Epic monster battle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <script src="../vue.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <div id="players">
+            <div id="player">
+                <p class="player-name">Вы</p>
+                <div class="hp-bar">
+                    <span><p class="hp player" :style="{width: playerHP+'%'}">{{playerHP}}</p></span>
+                </div>
+            </div>
+            <div id="monster">
+                <p class="player-name">Монстр</p>
+                <div class="hp-bar">
+                    <span><p class="hp monster" :style="{width: monsterHP+'%'}">{{monsterHP}}</p></span>
+                </div>
+            </div>
+        </div>
+        <div id="menu">
+            <button v-if="!gameStarted" @click="startGame">Новая игра</button>
+            <template v-else>
+                <button style="background-color: crimson" @click="attack">Атака!</button>
+                <button style="background-color: orange" @click="attackSpecial">Спец. атака</button>
+                <button style="background-color: green" @click="heal" :disabled="bandages <= 0">Лечиться x{{bandages}}</button>
+                <button style="background-color: white" @click="surrender">Сдаться</button>
+            </template>
+        </div>
+        <div id="log">
+            <ul>
+                <template v-for="log in logs">
+                    <li class="player">{{log.player}}</li>
+                    <li class="monster">{{log.monster}}</li>
+                </template>
+            </ul>
+
+        </div>
+    </div>
+</body>
+
+<script>
+
+    function initialState() {
+        return {
+            gameStarted: false,
+            playerHP: 100,
+            monsterHP: 100,
+            playerLog: [],
+            monsterLog: [],
+            bandages: 3,
+        }
+    }
+    new Vue({
+        el: '#app',
+        data: () => { return {
+            gameStarted: false,
+            playerHP: 100,
+            monsterHP: 100,
+            playerLog: [],
+            monsterLog: [],
+            bandages: 3,
+        }
+        },
+        watch: {
+            playerHP(value) {
+                if (value <= 0 && this.gameStarted) {
+                    this.gameStarted = false;
+                    this.playerHP = 0;
+                    alert("Вас нагнули :(")
+                }
+            },
+            monsterHP(value) {
+                if (value <= 0 && this.gameStarted) {
+                    this.gameStarted = false;
+                    this.monsterHP = 0;
+                    alert("Победа!")
+                }
+            }
+        },
+        computed: {
+            logs() {
+                return this.playerLog.map((pLog, i) => {
+                    return {
+                        player: pLog,
+                        monster: this.monsterLog[i]
+                    }
+                })
+            }
+        },
+        methods: {
+            startGame() {
+                Object.assign(this.$data, this.$options.data.call(this));
+                this.gameStarted = true;
+            },
+            getRandom: function (cap = 10) {
+                return Math.round(Math.random() * cap);
+            },
+            attack() {
+                let monsterAttack = this.getRandom();
+                let playerAttack = this.getRandom();
+                this.playerLog.push(`Вы нанесли ${playerAttack} урона.`)
+                this.monsterLog.push(`Монстр нанёс вам ${monsterAttack} урона.`)
+                this.monsterHP -= playerAttack;
+                this.playerHP -= monsterAttack;
+            },
+            attackSpecial() {
+                let monsterAttack = this.getRandom();
+                let playerAttack = this.getRandom(15);
+                this.playerLog.push(`Удар ниже пояса! Вы нанесли ${playerAttack} урона.`)
+                this.monsterLog.push(`Монстр нанёс вам ${monsterAttack} урона.`)
+                this.monsterHP -= playerAttack;
+                this.playerHP -= monsterAttack;
+            },
+            heal() {
+                if (this.bandages <= 1) {
+                    alert("Подорожник закончился!")
+                }
+                let monsterAttack = this.getRandom();
+                let playerHeal = this.getRandom();
+                this.playerLog.push(`Подорожник добавил вам ${playerHeal} HP.`)
+                this.monsterLog.push(`Монстр нанёс вам ${monsterAttack} урона.`)
+                this.playerHP += playerHeal - monsterAttack;
+                this.bandages--;
+            },
+            surrender() {
+                this.playerHP = 0;
+            }
+        }
+    })
+</script>
+
+<style>
+    #menu {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        box-shadow: 0 0 5px;
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    #players {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    #players>div {
+        padding: 0 5% 0 5%;
+        text-align: center;
+        width: 35%;
+    }
+
+    .hp-bar {
+        width: 100%;
+    }
+    .hp.player {
+        background-color: #519933;
+    }
+    .hp.monster {
+        background-color: #ff8a8a;
+    }
+
+    .hp {
+        font-size: 1.7rem;
+        border: solid 1px black;
+        transition: width 0.5s ease;
+    }
+
+    .player-name {
+        font-size: 3rem;
+    }
+
+    button {
+        background-color: white;
+        display: block;
+        border: none;
+        background-color: #4CAF50;
+        padding: 14px 28px;
+        font-size: 1.5rem;
+        margin-left: 15px;
+        box-shadow: 0 0 5px;
+    }
+
+    #log li {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        list-style: none;
+        text-align: center;
+    }
+
+    #log li.player {
+        background-color: #a0a0ff;
+        color: #1e1eff;
+    }
+
+    #log li.monster {
+        background-color: #ff8a8a;
+        color: #ab0000;
+    }
+</style>
+
+</html>
