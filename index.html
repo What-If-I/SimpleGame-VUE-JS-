@@ -17,13 +17,17 @@
             <div id="player">
                 <p class="player-name">Вы</p>
                 <div class="hp-bar">
-                    <span><p class="hp player" :style="{width: playerHP+'%'}">{{playerHP}}</p></span>
+                    <span>
+                        <p class="hp player" :style="{width: playerHP+'%'}">{{playerHP}}</p>
+                    </span>
                 </div>
             </div>
             <div id="monster">
                 <p class="player-name">Монстр</p>
                 <div class="hp-bar">
-                    <span><p class="hp monster" :style="{width: monsterHP+'%'}">{{monsterHP}}</p></span>
+                    <span>
+                        <p class="hp monster" :style="{width: monsterHP+'%'}">{{monsterHP}}</p>
+                    </span>
                 </div>
             </div>
         </div>
@@ -62,14 +66,15 @@
     }
     new Vue({
         el: '#app',
-        data: () => { return {
-            gameStarted: false,
-            playerHP: 100,
-            monsterHP: 100,
-            playerLog: [],
-            monsterLog: [],
-            bandages: 3,
-        }
+        data: () => {
+            return {
+                gameStarted: false,
+                playerHP: 100,
+                monsterHP: 100,
+                playerLog: [],
+                monsterLog: [],
+                bandages: 3,
+            }
         },
         watch: {
             playerHP(value) {
@@ -89,12 +94,13 @@
         },
         computed: {
             logs() {
-                return this.playerLog.map((pLog, i) => {
+                return (this.playerLog.map((pLog, i) => {
                     return {
                         player: pLog,
                         monster: this.monsterLog[i]
                     }
                 })
+                ).slice().reverse()
             }
         },
         methods: {
@@ -164,9 +170,11 @@
     .hp-bar {
         width: 100%;
     }
+
     .hp.player {
         background-color: #519933;
     }
+
     .hp.monster {
         background-color: #ff8a8a;
     }
