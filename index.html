@@ -153,6 +153,7 @@
         box-shadow: 0 0 5px;
         margin-left: 10%;
         margin-right: 10%;
+        flex-wrap: wrap;
     }
 
     #players {
@@ -215,6 +216,22 @@
     #log li.monster {
         background-color: #ff8a8a;
         color: #ab0000;
+    }
+
+    @media (max-width: 940px) {
+        #menu button {
+            width: 30vw;
+        }
+    }
+
+    @media (max-width: 330px) {
+        #menu button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .player-name {
+            font-size: 2rem;
+        }
     }
 </style>
 
