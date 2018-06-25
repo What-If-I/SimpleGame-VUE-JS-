@@ -112,7 +112,7 @@
                 return Math.round(Math.random() * cap);
             },
             attack() {
-                let monsterAttack = this.getRandom();
+                let monsterAttack = this.getRandom(12);
                 let playerAttack = this.getRandom();
                 this.playerLog.push(`Вы нанесли ${playerAttack} урона.`)
                 this.monsterLog.push(`Монстр нанёс вам ${monsterAttack} урона.`)
