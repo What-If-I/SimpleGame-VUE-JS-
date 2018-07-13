@@ -42,10 +42,12 @@
         </div>
         <div id="log">
             <ul>
-                <template v-for="log in logs">
-                    <li class="player">{{log.player}}</li>
-                    <li class="monster">{{log.monster}}</li>
-                </template>
+                <transition-group name="add-log">
+                    <template v-for="log in logs">
+                        <li class="player" :key="log.player">{{log.player}}</li>
+                        <li class="monster" :key="log.monster">{{log.monster}}</li>
+                    </template>
+                </transition-group>
             </ul>
 
         </div>
@@ -232,6 +234,21 @@
         .player-name {
             font-size: 2rem;
         }
+    }
+
+    .add-log-enter-active,
+    .list-leave-active {
+        transition: transform 1s;
+    }
+
+    .add-log-enter,
+    .add-log-leave-to {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    .add-log-move {
+        transition: transform 1s;
     }
 </style>
 
